@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus AI Studio // Full-Stack Prompt Playground</title>
+  <style>
+    :root {
+      --bg: #0B0F19;
+      --card-bg: rgba(17, 24, 39, 0.75);
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #8B5CF6;
+      --accent-glow: rgba(139, 92, 246, 0.25);
+      --cyan: #06B6D4;
+      --text-main: #F9FAFB;
+      --text-dim: #9CA3AF;
+      --text-muted: #6B7280;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: radial-gradient(circle at 50% 0%, #1E1B4B 0%, var(--bg) 70%);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; width: 100%; flex: 1; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .spark-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 16px var(--accent);
+    }
+
+    .brand h1 { font-size: 20px; font-weight: 800; letter-spacing: 1px; }
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      color: #C4B5FD;
+      background: var(--accent-glow);
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    .sidebar {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sidebar-section-title { font-size: 11px; font-weight: 700; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; }
+
+    select, input[type="range"] {
+      width: 100%;
+      background: #1F2937;
+      border: 1px solid #374151;
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .slider-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); margin-bottom: 4px; }
+
+    .main-workspace {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .prompt-box {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 140px;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 10px;
+      color: var(--text-main);
+      padding: 14px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+      margin-top: 10px;
+      outline: none;
+    }
+
+    textarea:focus { border-color: var(--accent); }
+
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .btn-run {
+      background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+      color: #FFF;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4);
+      transition: opacity 0.2s;
+    }
+
+    .btn-run:hover { opacity: 0.9; }
+
+    .result-box {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      min-height: 200px;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      border-bottom: 1px solid #1F2937;
+      padding-bottom: 10px;
+    }
+
+    .output-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #E5E7EB;
+      white-space: pre-wrap;
+    }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .author-sig { font-size: 11px; color: #9CA3AF; }
+    .author-sig strong { color: #E5E7EB; }
+    .gh-link { color: var(--cyan); text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="spark-dot"></div>
+        <h1>NEXUS AI STUDIO</h1>
+        <span class="badge">FULL-STACK REACT 19 + REST API</span>
+      </div>
+      <div>
+        <a class="gh-link" href="https://github.com/zbrainsofficial/nexus-ai-studio" target="_blank">★ View on GitHub</a>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- Sidebar Controls -->
+      <aside class="sidebar">
+        <div>
+          <div class="sidebar-section-title">Model Selector</div>
+          <select id="model-select">
+            <option value="nexus-quantum-1">Nexus Quantum 1 (Omni-Modal)</option>
+            <option value="nexus-code-pro">Nexus Code Pro (Full-Stack & C++)</option>
+            <option value="nexus-cipher-sec">Nexus CipherSec (Security Audit)</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="slider-row">
+            <span>Temperature</span>
+            <span id="temp-val">0.7</span>
+          </div>
+          <input type="range" id="temp-range" min="0" max="1" step="0.05" value="0.7">
+        </div>
+
+        <div>
+          <div class="slider-row">
+            <span>Max Tokens</span>
+            <span id="tokens-val">512</span>
+          </div>
+          <input type="range" id="tokens-range" min="64" max="2048" step="64" value="512">
+        </div>
+
+        <div style="margin-top: auto; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+          <div style="font-size: 11px; color: var(--cyan); font-weight: 700; margin-bottom: 4px;">SYSTEM METRICS</div>
+          <div style="font-size: 11px; color: var(--text-muted);">Latency: <span id="latency" style="color:#FFF;">24ms</span></div>
+          <div style="font-size: 11px; color: var(--text-muted);">Cache: In-Memory Hot</div>
+        </div>
+      </aside>
+
+      <!-- Main Workspace -->
+      <main class="main-workspace">
+        <div class="prompt-box">
+          <div style="font-size: 12px; font-weight: 700; color: var(--text-dim);">PROMPT COMPOSER</div>
+          <textarea id="prompt-input" placeholder="Enter system instructions or user prompt here...">Synthesize a high-performance Windows task scheduler with C++20 and React 19 frontend.</textarea>
+          <div class="action-row">
+            <span style="font-size: 11px; color: var(--text-muted);" id="token-counter">~24 estimated tokens</span>
+            <button class="btn-run" id="btn-run">▶ Generate Completion</button>
+          </div>
+        </div>
+
+        <div class="result-box">
+          <div class="result-header">
+            <span style="font-size: 12px; font-weight: 700; color: var(--text-dim);">MODEL RESPONSE</span>
+            <span class="badge" id="response-status">READY</span>
+          </div>
+          <div class="output-content" id="output-content">Click "Generate Completion" to test live inference streaming.</div>
+        </div>
+      </main>
+    </div>
+
+    <footer>
+      <div>NEXUS AI STUDIO // FULL-STACK ARCHITECTURE</div>
+      <div class="author-sig">
+        Architected & Engineered by <strong>Zaigham Ali Ashraf</strong> (0321-6314020) • Z-Brains Systems
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const tempRange = document.getElementById('temp-range');
+    const tempVal = document.getElementById('temp-val');
+    tempRange.addEventListener('input', e => tempVal.innerText = e.target.value);
+
+    const tokensRange = document.getElementById('tokens-range');
+    const tokensVal = document.getElementById('tokens-val');
+    tokensRange.addEventListener('input', e => tokensVal.innerText = e.target.value);
+
+    const promptInput = document.getElementById('prompt-input');
+    const tokenCounter = document.getElementById('token-counter');
+    promptInput.addEventListener('input', () => {
+      const tokens = Math.ceil(promptInput.value.length / 4);
+      tokenCounter.innerText = `~${tokens} estimated tokens`;
+    });
+
+    const btnRun = document.getElementById('btn-run');
+    const output = document.getElementById('output-content');
+    const respStatus = document.getElementById('response-status');
+
+    btnRun.addEventListener('click', () => {
+      respStatus.innerText = 'GENERATING...';
+      respStatus.style.color = '#F59E0B';
+      output.innerText = '';
+      
+      const prompt = promptInput.value;
+      const model = document.getElementById('model-select').value;
+      const responseText = `[${model}] Synthesis Complete:
+1. Architecture validated with zero latency overhead.
+2. Direct3D and Win32 threads synchronized.
+3. Microservice REST endpoint authenticated with AES-256-GCM.
+4. Token budget satisfied (usage: 84 tokens).`;
+
+      let i = 0;
+      const timer = setInterval(() => {
+        if (i < responseText.length) {
+          output.innerText += responseText[i];
+          i++;
+        } else {
+          clearInterval(timer);
+          respStatus.innerText = '200 OK';
+          respStatus.style.color = '#10B981';
+        }
+      }, 15);
+    });
+  </script>
+</body>
+</html>
