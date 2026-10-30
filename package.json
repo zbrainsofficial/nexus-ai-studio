@@ -1,0 +1,23 @@
+{
+  "name": "nexus-ai-studio",
+  "version": "1.0.0",
+  "description": "Full-Stack AI Prompt Engineering Studio & Multi-Model Playground (React 19 + TypeScript + Node.js REST API)",
+  "main": "server/server.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node server/server.mjs",
+    "test": "node tests/server.test.mjs"
+  },
+  "keywords": [
+    "full-stack",
+    "react19",
+    "typescript",
+    "ai-studio",
+    "llm-playground",
+    "prompt-engineering",
+    "nodejs",
+    "rest-api"
+  ],
+  "author": "Zaigham Ali Ashraf (0321-6314020) - Z-Brains Systems",
+  "license": "MIT"
+}
